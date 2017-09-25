@@ -4,9 +4,13 @@ package com.mistong.datatrack;
  * Created by ryanh on 2017/9/24.
  */
 
-public interface TrackObject {
+public class TrackObject {
 
-    void onExposed ();
+    public void onVisibilityChanged (boolean visible) {
 
-    void sendEvent (String action);
+    }
+
+    public void sendEvent (String action) {
+
+    }
 }
