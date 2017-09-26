@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.mistong.datatrack.TrackObject;
 import com.mistong.datatrack.TrackObjectTree;
-import com.mistong.datatrack.ViewTreeScrollTracker;
 
 public class MainActivity extends Activity {
 
