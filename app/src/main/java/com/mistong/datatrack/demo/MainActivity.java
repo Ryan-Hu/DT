@@ -10,30 +10,50 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.mistong.datatrack.ViewExposeTrackHelper;
+import com.mistong.datatrack.TrackObject;
+import com.mistong.datatrack.TrackObjectTree;
 import com.mistong.datatrack.ViewTreeScrollTracker;
-
-import org.w3c.dom.Text;
 
 public class MainActivity extends Activity {
 
-    private ViewTreeScrollTracker mViewTreeScrollTracker;
+    private TrackObjectTree mTrackObjectTree;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initViews();
-//        ViewExposeTrackHelper.register(findViewById(android.R.id.content));
-        mViewTreeScrollTracker = new ViewTreeScrollTracker(findViewById(android.R.id.content));
+        mTrackObjectTree = TrackObjectTree.buildFromView(findViewById(android.R.id.content));
+        mTrackObjectTree.addTrackObjectTreeListener(new TrackObjectTree.TrackObjectTreeListener() {
+            @Override
+            public void onTrackObjectAdded(TrackObject trackObject) {
+                Log.e("test", "TrackObject " + trackObject.getData() + " is removed");
+            }
+
+            @Override
+            public void onTrackObjectRemoved(TrackObject trackObject) {
+                Log.e("test", "TrackObject " + trackObject.getData() + " is added");
+            }
+
+            @Override
+            public void onTrackObjectPositionChanged(TrackObject trackObject, int oldPosition, int position) {
+
+            }
+        });
     }
 
     private void initViews () {
+        findViewById(R.id.title).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mTrackObjectTree.print();
+            }
+        });
         ViewGroup list = (ViewGroup)findViewById(R.id.list);
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 50; i++) {
             TextView tv = new TextView(this);
             tv.setText(String.format("%d. hahahahhhh", i));
-            tv.setTag(i);
+            tv.setTag("S" + i);
             tv.setGravity(Gravity.CENTER);
             tv.setPadding(100, 100, 100, 100);
             list.addView(tv);
@@ -43,14 +63,6 @@ public class MainActivity extends Activity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(new AdapterImpl());
-//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//                Log.e("test", "----------------------- " + dy + " -> " + recyclerView.getScrollY());
-//            }
-//        });
     }
 
     private class AdapterImpl extends RecyclerView.Adapter<ViewHolder> {
@@ -66,12 +78,12 @@ public class MainActivity extends Activity {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             holder.text.setText(String.format("%d. hahahahhhh", position));
-            holder.text.setTag(position);
+            holder.text.setTag("R" + position);
         }
 
         @Override
         public int getItemCount() {
-            return 100;
+            return 50;
         }
     }
 

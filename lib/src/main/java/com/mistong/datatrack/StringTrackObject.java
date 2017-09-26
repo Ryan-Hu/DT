@@ -20,11 +20,6 @@ public class StringTrackObject extends TrackObject {
     }
 
     @Override
-    public void sendEvent(String action) {
-
-    }
-
-    @Override
     public int hashCode() {
         return mContent != null ? mContent.hashCode() : 0;
     }

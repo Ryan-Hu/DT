@@ -12,6 +12,7 @@ import android.widget.AbsListView;
 import android.widget.ScrollView;
 
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -61,11 +62,11 @@ public class ViewTreeScrollTracker {
 
         ViewTreeTraverser.traverse(root, new ViewTreeTraverser.ViewProcessor() {
             @Override
-            public void process(View view) {
+            public void process(View view, Map<String, Object> context) {
 
                 if (view.getVisibility() == View.VISIBLE
-                        && isViewOnScreen(view)
-                        && canViewScroll(view)) {
+                        && ViewTrackUtil.isViewOnScreen(view)
+                        && ViewTrackUtil.canViewScroll(view)) {
 
                     ScrollInfo scrollInfo = ScrollInfoPool.getInstance().acquire(view);
                     if (scrollInfo != null) {
@@ -74,20 +75,9 @@ public class ViewTreeScrollTracker {
                     }
                 }
             }
-        });
+        }, new HashMap<String, Object>());
     }
 
-    private boolean canViewScroll (View view) {
-        return view instanceof ScrollView
-                || view instanceof AbsListView
-                || view instanceof RecyclerView
-                || view instanceof NestedScrollView
-                || view instanceof ViewPager;
-    }
-
-    private boolean isViewOnScreen (View view) {
-        return true;    //TODO
-    }
 
     public void trackScroll () {
 
@@ -234,6 +224,7 @@ public class ViewTreeScrollTracker {
         @Override
         public void cleanUp() {
             super.cleanUp();
+            getAttachedView().removeOnScrollListener(mOnScrollListener);
             mScrollChanged = false;
         }
     }
